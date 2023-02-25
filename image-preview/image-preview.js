@@ -6,38 +6,39 @@ function createDOM(input, element, file, res) {
     const preview = item.querySelector('[data-preview]')
     if (preview.querySelector('img')) preview.querySelector('img').remove();
     console.log(preview);
+    // 複製圖片
     const cloneImg = res.imgElement.cloneNode(true)
     preview.appendChild(cloneImg);
     const group = input.dataset.group;
     const inputIndex = document.querySelector(element.el).dataset.index
-    if (params.compress) {
-      //副檔名
-      const fileExt = file.name.substring(file.name.lastIndexOf('.')).replace('.');
-      //檔名
-      const fileName = file.name.replace(`.${fileExt}`, '');
-      //檔案壓縮
-      res.originalCanvas.toBlob(
-        function (blob) {
-          const imgFile = new File([blob], `${fileName}`, { type: file.type });
-          uploadImage[`${group}`][inputIndex] = {
-            file: imgFile,
-            info: res,
-          };
-          if (params.on.changeAfter && typeof params.on.changeAfter === 'function')
-            params.on.changeAfter(input, res);
-        },
-        file.type,
-        params.compress
-      );
-    } else {
-      uploadImage[`${group}`][inputIndex] = {
-        file: file,
-        info: res,
-      };
-      if (params.on.changeAfter && typeof params.on.changeAfter === 'function')
-        params.on.changeAfter(input, res);
-    }
   })
+  if (params.compress) {
+    //副檔名
+    const fileExt = file.name.substring(file.name.lastIndexOf('.')).replace('.');
+    //檔名
+    const fileName = file.name.replace(`.${fileExt}`, '');
+    //檔案壓縮
+    res.originalCanvas.toBlob(
+      function (blob) {
+        const imgFile = new File([blob], `${fileName}`, { type: file.type });
+        uploadImage[`${group}`][inputIndex] = {
+          file: imgFile,
+          info: res,
+        };
+        if (params.on.changeAfter && typeof params.on.changeAfter === 'function')
+          params.on.changeAfter(input, res);
+      },
+      file.type,
+      params.compress
+    );
+  } else {
+    uploadImage[`${group}`][inputIndex] = {
+      file: file,
+      info: res,
+    };
+    if (params.on.changeAfter && typeof params.on.changeAfter === 'function')
+      params.on.changeAfter(input, res);
+  }
 }
 
 //產生Canvas
